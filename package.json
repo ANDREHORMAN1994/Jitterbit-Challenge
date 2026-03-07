@@ -1,0 +1,36 @@
+{
+  "name": "jitterbit-challenge",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API que permite Criar, Ler, Atualizar e Deletar pedidos",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ANDREHORMAN1994/Jitterbit-Challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ANDREHORMAN1994/Jitterbit-Challenge/issues"
+  },
+  "homepage": "https://github.com/ANDREHORMAN1994/Jitterbit-Challenge#readme",
+  "dependencies": {
+    "@prisma/client": "^7.4.2",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.3.5",
+    "prisma": "^7.4.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3"
+  }
+}
