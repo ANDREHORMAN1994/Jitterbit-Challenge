@@ -1,17 +1,16 @@
 import 'dotenv/config';
-import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { prisma } from '@/lib/prisma.js';
+import app from '@/app.js';
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-
+// Basic endpoint to verify server is running
 app.get('/', (_req, res) => {
   res.status(StatusCodes.OK).send('Hello, World!!!');
 });
 
+// Heath check endpoint to verify database connectivity
 app.get('/health', async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
