@@ -7,7 +7,11 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f",
+    "db:restart": "docker compose down && docker compose up -d"
   },
   "repository": {
     "type": "git",
@@ -21,9 +25,12 @@
   },
   "homepage": "https://github.com/ANDREHORMAN1994/Jitterbit-Challenge#readme",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "http-status-codes": "^2.3.0",
+    "pg": "^8.20.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
