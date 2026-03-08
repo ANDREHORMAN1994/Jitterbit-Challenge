@@ -1,20 +1,36 @@
-import { findOrderById, createOrder, listAllOrders } from '@/repositories/order.repository.js';
+import repository from '@/repositories/order.repository.js';
 import { mapOrderPayload } from '@/utils/formatData.js';
 import { OrderBody } from '@/validators/order.validator.js';
 import ErrorMessage from '@/utils/ErrorMessage.js';
 import { StatusCodes } from 'http-status-codes';
 
-export const createOrderService = async (payload: OrderBody) => {
+const createOrder = async (payload: OrderBody) => {
   const orderData = mapOrderPayload(payload);
-  const orderAlreadyExists = await findOrderById(orderData.orderId);
+  const orderAlreadyExists = await repository.findOrderById(orderData.orderId);
 
   if (orderAlreadyExists) {
     throw new ErrorMessage(StatusCodes.CONFLICT, 'Order with this ID already exists');
   }
 
-  return await createOrder(orderData);
+  return await repository.createOrder(orderData);
 };
 
-export const listOrdersService = async () => {
-  return await listAllOrders();
+const listAllOrders = async () => {
+  return await repository.listAllOrders();
+};
+
+const findOrderById = async (orderId: string) => {
+  const order = await repository.findOrderById(orderId);
+
+  if (!order) {
+    throw new ErrorMessage(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+
+  return order;
+};
+
+export default {
+  createOrder,
+  listAllOrders,
+  findOrderById,
 };

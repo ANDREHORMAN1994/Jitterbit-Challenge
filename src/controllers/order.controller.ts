@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
-import { validateOrderBody } from '@/validators/order.validator.js';
-import { createOrderService, listOrdersService } from '@/services/order.service.js';
+import { validateOrderBody, validateOrderIdParam } from '@/validators/order.validator.js';
+import service from '@/services/order.service.js';
 import { StatusCodes } from 'http-status-codes';
 import { Order } from '@/types/order.type.js';
 
@@ -13,11 +13,11 @@ const formatResult = (order: Order) => ({
   })),
 });
 
-export const createOrder = async (req: Request, res: Response, next: NextFunction) => {
+const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const validatedData = validateOrderBody.parse(req.body);
 
-    const order = await createOrderService(validatedData);
+    const order = await service.createOrder(validatedData);
     const response = formatResult(order);
 
     res.status(StatusCodes.CREATED).json(response);
@@ -26,13 +26,31 @@ export const createOrder = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const listOrders = async (_req: Request, res: Response, next: NextFunction) => {
+const listAllOrders = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const orders = await listOrdersService();
+    const orders = await service.listAllOrders();
     const response = orders.map(formatResult);
 
     res.status(StatusCodes.OK).json(response);
   } catch (error) {
     next(error);
   }
+};
+
+const findOrderById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = validateOrderIdParam.parse(req.params);
+    const order = await service.findOrderById(id);
+    const response = formatResult(order);
+
+    res.status(StatusCodes.OK).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  createOrder,
+  listAllOrders,
+  findOrderById,
 };

@@ -1,14 +1,7 @@
 import { prisma } from '@/lib/prisma.js';
 import { Order } from '@/types/order.type.js';
 
-export const findOrderById = async (orderId: string) => {
-  return await prisma.order.findUnique({
-    where: { orderId },
-    include: { items: true },
-  });
-};
-
-export const createOrder = async (orderData: Order) => {
+const createOrder = async (orderData: Order) => {
   return prisma.order.create({
     data: {
       orderId: orderData.orderId,
@@ -24,10 +17,23 @@ export const createOrder = async (orderData: Order) => {
   });
 };
 
-export const listAllOrders = async () => {
+const listAllOrders = async () => {
   return prisma.order.findMany({
     include: {
       items: true,
     },
   });
+};
+
+const findOrderById = async (orderId: string) => {
+  return await prisma.order.findUnique({
+    where: { orderId },
+    include: { items: true },
+  });
+};
+
+export default {
+  createOrder,
+  listAllOrders,
+  findOrderById,
 };

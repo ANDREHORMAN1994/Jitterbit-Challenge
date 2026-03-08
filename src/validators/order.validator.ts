@@ -21,3 +21,9 @@ export const validateOrderBody = z
   });
 
 export type OrderBody = z.infer<typeof validateOrderBody>;
+
+export const validateOrderIdParam = z.object({
+  id: z.string().min(1, 'id parameter is required'),
+});
+
+export type OrderIdParam = z.infer<typeof validateOrderIdParam>;
