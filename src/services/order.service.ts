@@ -1,4 +1,4 @@
-import { findOrderById, createOrder } from '@/repositories/order.repository.js';
+import { findOrderById, createOrder, listAllOrders } from '@/repositories/order.repository.js';
 import { mapOrderPayload } from '@/utils/formatData.js';
 import { OrderBody } from '@/validators/order.validator.js';
 import ErrorMessage from '@/utils/ErrorMessage.js';
@@ -13,4 +13,8 @@ export const createOrderService = async (payload: OrderBody) => {
   }
 
   return await createOrder(orderData);
+};
+
+export const listOrdersService = async () => {
+  return await listAllOrders();
 };

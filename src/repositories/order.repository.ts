@@ -23,3 +23,11 @@ export const createOrder = async (orderData: Order) => {
     },
   });
 };
+
+export const listAllOrders = async () => {
+  return prisma.order.findMany({
+    include: {
+      items: true,
+    },
+  });
+};
