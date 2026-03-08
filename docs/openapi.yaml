@@ -1,0 +1,330 @@
+openapi: 3.0.3
+info:
+  title: Jitterbit Challenge API
+  version: 1.0.0
+  description: API para gerenciamento de pedidos
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+
+tags:
+  - name: Health
+  - name: Orders
+
+paths:
+  /:
+    get:
+      tags:
+        - Health
+      summary: Verifica se a API está no ar
+      responses:
+        '200':
+          description: API disponível
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello, World!!!
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Verifica a conectividade com o banco
+      responses:
+        '200':
+          description: Banco acessível
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthSuccess'
+        '500':
+          description: Falha na conexão com o banco
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /order:
+    post:
+      tags:
+        - Orders
+      summary: Cria um pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderBody'
+      responses:
+        '201':
+          description: Pedido criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Payload inválido
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorMessage'
+                  - $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Pedido já existe
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+  /order/list:
+    get:
+      tags:
+        - Orders
+      summary: Lista todos os pedidos
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+
+  /order/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Busca um pedido por ID
+      parameters:
+        - $ref: '#/components/parameters/OrderIdParam'
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '404':
+          description: Pedido não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    patch:
+      tags:
+        - Orders
+      summary: Atualiza parcialmente um pedido
+      parameters:
+        - $ref: '#/components/parameters/OrderIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderBody'
+      responses:
+        '200':
+          description: Pedido atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Payload inválido
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorMessage'
+                  - $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Pedido não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags:
+        - Orders
+      summary: Remove um pedido
+      parameters:
+        - $ref: '#/components/parameters/OrderIdParam'
+      responses:
+        '204':
+          description: Pedido removido com sucesso
+        '404':
+          description: Pedido não encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
+components:
+  parameters:
+    OrderIdParam:
+      name: id
+      in: path
+      required: true
+      description: Identificador do pedido
+      schema:
+        type: string
+      example: v10089015vdb-02
+
+  schemas:
+    CreateOrderItem:
+      type: object
+      required:
+        - idItem
+        - quantidadeItem
+        - valorItem
+      properties:
+        idItem:
+          type: string
+          example: '2434'
+        quantidadeItem:
+          type: integer
+          minimum: 1
+          example: 1
+        valorItem:
+          type: number
+          format: float
+          minimum: 0
+          example: 1000
+
+    CreateOrderBody:
+      type: object
+      required:
+        - numeroPedido
+        - valorTotal
+        - dataCriacao
+        - items
+      properties:
+        numeroPedido:
+          type: string
+          example: v10089015vdb-02
+        valorTotal:
+          type: number
+          format: float
+          minimum: 0
+          example: 10000
+        dataCriacao:
+          type: string
+          format: date-time
+          example: '2023-07-19T12:24:11.529Z'
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CreateOrderItem'
+
+    UpdateOrderBody:
+      type: object
+      properties:
+        valorTotal:
+          type: number
+          format: float
+          minimum: 0
+          example: 12500
+        dataCriacao:
+          type: string
+          format: date-time
+          example: '2023-07-20T09:30:00.000Z'
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/CreateOrderItem'
+
+    OrderItemResponse:
+      type: object
+      required:
+        - productId
+        - quantity
+        - price
+      properties:
+        productId:
+          type: integer
+          example: 2434
+        quantity:
+          type: integer
+          example: 1
+        price:
+          type: number
+          format: float
+          example: 1000
+
+    OrderResponse:
+      type: object
+      required:
+        - orderId
+        - value
+        - creationDate
+        - items
+      properties:
+        orderId:
+          type: string
+          example: v10089015vdb-02
+        value:
+          type: number
+          format: float
+          example: 10000
+        creationDate:
+          type: string
+          format: date-time
+          example: '2023-07-19T12:24:11.529Z'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemResponse'
+
+    HealthSuccess:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+          example: ok
+        message:
+          type: string
+          example: Database connection successful
+
+    ErrorMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Order not found
+
+    ValidationErrorItem:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          example: items.0.idItem
+        message:
+          type: string
+          example: idItem is required
+
+    ValidationError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Invalid request data
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationErrorItem'
