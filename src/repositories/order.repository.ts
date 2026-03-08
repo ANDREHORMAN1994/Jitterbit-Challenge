@@ -32,8 +32,26 @@ const findOrderById = async (orderId: string) => {
   });
 };
 
+const updateOrderById = async (orderId: string, orderData: Partial<Order>) => {
+  return await prisma.order.update({
+    where: { orderId },
+    data: {
+      ...(orderData.value !== undefined && { value: orderData.value }),
+      ...(orderData.creationDate !== undefined && { creationDate: orderData.creationDate }),
+      ...(orderData.items !== undefined && {
+        items: {
+          deleteMany: {},
+          create: orderData.items,
+        },
+      }),
+    },
+    include: { items: true },
+  });
+};
+
 export default {
   createOrder,
   listAllOrders,
   findOrderById,
+  updateOrderById,
 };

@@ -1,5 +1,9 @@
 import type { Request, Response, NextFunction } from 'express';
-import { validateOrderBody, validateOrderIdParam } from '@/validators/order.validator.js';
+import {
+  validateOrderBody,
+  validateOrderIdParam,
+  validateUpdateOrderBody,
+} from '@/validators/order.validator.js';
 import service from '@/services/order.service.js';
 import { StatusCodes } from 'http-status-codes';
 import { Order } from '@/types/order.type.js';
@@ -49,8 +53,22 @@ const findOrderById = async (req: Request, res: Response, next: NextFunction) =>
   }
 };
 
+const updateOrderById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = validateOrderIdParam.parse(req.params);
+    const validatedData = validateUpdateOrderBody.parse(req.body);
+    const order = await service.updateOrderById(id, validatedData);
+    const response = formatResult(order);
+
+    res.status(StatusCodes.OK).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   createOrder,
   listAllOrders,
   findOrderById,
+  updateOrderById,
 };

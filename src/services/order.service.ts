@@ -1,6 +1,6 @@
 import repository from '@/repositories/order.repository.js';
-import { mapOrderPayload } from '@/utils/formatData.js';
-import { OrderBody } from '@/validators/order.validator.js';
+import { mapOrderPayload, mapPartialOrderPayload } from '@/utils/formatData.js';
+import { OrderBody, UpdateOrderBody } from '@/validators/order.validator.js';
 import ErrorMessage from '@/utils/ErrorMessage.js';
 import { StatusCodes } from 'http-status-codes';
 
@@ -29,8 +29,21 @@ const findOrderById = async (orderId: string) => {
   return order;
 };
 
+const updateOrderById = async (orderId: string, payload: UpdateOrderBody) => {
+  const existingOrder = await repository.findOrderById(orderId);
+
+  if (!existingOrder) {
+    throw new ErrorMessage(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+
+  const orderData = mapPartialOrderPayload(payload);
+
+  return await repository.updateOrderById(orderId, orderData);
+};
+
 export default {
   createOrder,
   listAllOrders,
   findOrderById,
+  updateOrderById,
 };
