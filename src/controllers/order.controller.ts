@@ -66,9 +66,21 @@ const updateOrderById = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+const deleteOrderById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = validateOrderIdParam.parse(req.params);
+    await service.deleteOrderById(id);
+
+    res.status(StatusCodes.NO_CONTENT).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   createOrder,
   listAllOrders,
   findOrderById,
   updateOrderById,
+  deleteOrderById,
 };

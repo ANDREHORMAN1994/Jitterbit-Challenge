@@ -49,9 +49,16 @@ const updateOrderById = async (orderId: string, orderData: Partial<Order>) => {
   });
 };
 
+const deleteOrderById = async (orderId: string) => {
+  await prisma.order.delete({
+    where: { orderId },
+  });
+};
+
 export default {
   createOrder,
   listAllOrders,
   findOrderById,
   updateOrderById,
+  deleteOrderById,
 };

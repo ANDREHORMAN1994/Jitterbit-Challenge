@@ -41,9 +41,20 @@ const updateOrderById = async (orderId: string, payload: UpdateOrderBody) => {
   return await repository.updateOrderById(orderId, orderData);
 };
 
+const deleteOrderById = async (orderId: string) => {
+  const existingOrder = await repository.findOrderById(orderId);
+
+  if (!existingOrder) {
+    throw new ErrorMessage(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+
+  await repository.deleteOrderById(orderId);
+};
+
 export default {
   createOrder,
   listAllOrders,
   findOrderById,
   updateOrderById,
+  deleteOrderById,
 };

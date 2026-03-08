@@ -7,5 +7,6 @@ orderRouter.post('/order', controller.createOrder);
 orderRouter.get('/order/list', controller.listAllOrders);
 orderRouter.get('/order/:id', controller.findOrderById);
 orderRouter.patch('/order/:id', controller.updateOrderById);
+orderRouter.delete('/order/:id', controller.deleteOrderById);
 
 export default orderRouter;
